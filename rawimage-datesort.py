@@ -70,7 +70,7 @@ def processImage(i, outdir):
 
 
 def main():
-    usage = "usage: %prog [options] arg"
+    usage = "usage: %prog [options] <files|pattern>"
     parser = OptionParser(usage)
 
     parser.add_option("-o", "--outdir", dest="outdir",
