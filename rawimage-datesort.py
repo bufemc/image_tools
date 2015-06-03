@@ -1,18 +1,8 @@
-#!/usr/bin/env python
+#!/opt/local/bin/python
 ##########################################################################
-#       Title:
-#    $RCSfile: $
-#   $Revision: $$Name:  $
-#       $Date: $
-#   Copyright: $Author: $
-# Description: 
-#
-#
-#
-#------------------------------------------------------------------------
-#
-#  $Log: $
-#
+#       Title: rawimage-datesort.py
+#   Copyright: Christoph G. Keller <christoph.keller@gmx.net>
+# Description: Sort image files into folder using exif info
 #
 ##########################################################################
 from optparse import OptionParser
@@ -37,7 +27,10 @@ def processImage(i,outdir):
 
     # get the meta info
     image = pyexiv2.ImageMetadata(i)
-    image.read()
+    try:
+        image.read()
+    except:
+        return False
 
     key = 'Exif.Image.DateTime'
     datetime=[]
@@ -47,7 +40,7 @@ def processImage(i,outdir):
         key = 'Exif.Photo.DateTimeOriginal'
         datetime = image[key]
 
-    # create the output folder structre
+    # create the output folder structure
     datedir = str(datetime.value.year) 
     datedir += '-'
     datedir += str( '%02i') % datetime.value.month
@@ -61,8 +54,10 @@ def processImage(i,outdir):
         os.makedirs(fulldatedir)
     
     # move the file
-    shutil.move(i,fulldatedir)
-
+    if not os.path.exists(os.path.join(fulldatedir,i)):
+        shutil.move(i,fulldatedir)
+    else:
+        print "File already exists"
 
 
 def main():
@@ -79,7 +74,10 @@ def main():
 
     # now pocess all the command line files
     for i in args:
-        processImage(i,outdir)
+        presult = processImage(i,outdir)
+        if presult == False:
+            print "Unable to open file: %s" % (i)
+
 
 
 
