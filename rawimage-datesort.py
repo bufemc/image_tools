@@ -66,6 +66,11 @@ def processImage(i, outdir):
     else:
         print "File already exists, not doing anything."
 
+    # if ther are xmp meta files, also move them
+    xmpname = i +'.xmp'
+    if os.path.exists(xmpname):
+        shutil.move(xmpname, fulldatedir)
+    
     return True
 
 
